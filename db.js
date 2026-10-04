@@ -5,13 +5,15 @@ const { createClient } = require('@libsql/client');
 
 // Production: set TURSO_DATABASE_URL (libsql://...) and TURSO_AUTH_TOKEN to use a hosted Turso database.
 // Local: falls back to a SQLite file on disk (DB_FILE or data/daytrack.db).
-let url = process.env.TURSO_DATABASE_URL;
+// Values pasted into hosting dashboards often carry a stray newline or space, which breaks URL parsing.
+let url = (process.env.TURSO_DATABASE_URL || '').trim();
+const authToken = (process.env.TURSO_AUTH_TOKEN || '').trim() || undefined;
 if (!url) {
   const file = path.resolve(process.env.DB_FILE || path.join(__dirname, 'data', 'daytrack.db'));
   fs.mkdirSync(path.dirname(file), { recursive: true });
   url = 'file:' + file;
 }
-const client = createClient({ url, authToken: process.env.TURSO_AUTH_TOKEN });
+const client = createClient({ url, authToken });
 
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS users (
