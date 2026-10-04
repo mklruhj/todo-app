@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: daytrack
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: TURSO_DATABASE_URL
+        sync: false   # entered in the Render dashboard
+      - key: TURSO_AUTH_TOKEN
+        sync: false   # entered in the Render dashboard
